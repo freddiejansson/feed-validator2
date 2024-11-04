@@ -4,9 +4,12 @@ import Papa from 'papaparse';
 import { FileText, Upload, HardDrive, Database } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProgressBar } from '@/components/ui/progress-bar';
+import { DataTable } from '@/components/upload/DataTable';
+import { ColumnList } from '@/components/upload/ColumnList';
+import { FieldSpecifications } from './FieldSpecifications';
 
 interface FileUploadProps {
-  onFileProcessed: (data: any[]) => void;
+  onFileProcessed: (data: any[], columns: string[]) => void;
 }
 
 export function FileUpload({ onFileProcessed }: FileUploadProps) {
@@ -18,6 +21,8 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
   } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
+  const [parsedData, setParsedData] = useState<Record<string, any>[]>([]);
+  const [columns, setColumns] = useState<string[]>([]);
 
   const handleFile = useCallback(async (file: File) => {
     console.log('Starting file processing:', file.name);
@@ -53,11 +58,15 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
         clearInterval(progressInterval);
         setUploadProgress(100);
         setIsUploading(false);
+        const typedData = results.data as Record<string, any>[];
+        const columns = Object.keys(typedData[0] || {});
+        setParsedData(typedData);
+        setColumns(columns);
         setFileInfo(prev => prev ? { 
           ...prev, 
           rows: results.data.length,
         } : null);
-        onFileProcessed(results.data);
+        onFileProcessed(results.data, columns);
       },
       error: (error) => {
         console.error('Error parsing CSV:', error);
@@ -136,6 +145,14 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
               </div>
             </CardContent>
           </Card>
+
+          <ColumnList columns={columns} />
+
+          <DataTable data={parsedData} columns={columns} />
+
+          {fileInfo && parsedData.length > 0 && (
+            <FieldSpecifications data={parsedData} />
+          )}
         </>
       )}
     </div>

@@ -3,7 +3,7 @@
 ## Purpose and Core Functionality
 
 ### Primary Purpose
-A Next.js web application designed to validate and analyze CSV feed files, specifically focused on e-commerce data validation and analytics.
+A Next.js web application designed to validate and analyze CSV feed files, done in the browser client with no backend or database.
 
 ### Core Features
 1. CSV File Upload and Processing
@@ -38,6 +38,7 @@ A Next.js web application designed to validate and analyze CSV feed files, speci
 - TypeScript
 - Tailwind CSS for styling
 - Recharts for data visualization
+- no database, no backend
 
 ### Key Dependencies
 

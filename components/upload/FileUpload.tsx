@@ -1,10 +1,9 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Papa from 'papaparse';
-import { FileText, Upload, Database, HardDrive } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileText, Upload, HardDrive, Database } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { ProgressBar } from '@/components/ui/progress-bar';
-import { ColumnValidation } from '@/components/validation/ColumnValidation';
 
 interface FileUploadProps {
   onFileProcessed: (data: any[]) => void;
@@ -16,13 +15,12 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
     name: string;
     size: number;
     rows: number;
-    headers: string[];
   } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleFile = useCallback(async (file: File) => {
+    console.log('Starting file processing:', file.name);
     setIsUploading(true);
     setShowProgress(true);
     setUploadProgress(0);
@@ -30,13 +28,9 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
       name: file.name,
       size: file.size,
       rows: 0,
-      headers: [],
     });
 
-    // Create new AbortController
-    abortControllerRef.current = new AbortController();
-
-    // Simulate 5-second progress
+    // Simulate progress
     const startTime = Date.now();
     const duration = 5000; // 5 seconds
     
@@ -50,18 +44,18 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
       }
     }, 50);
 
-    // Parse CSV file in parallel
+    // Parse CSV file
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
+        console.log('Parse complete:', results);
         clearInterval(progressInterval);
         setUploadProgress(100);
         setIsUploading(false);
         setFileInfo(prev => prev ? { 
           ...prev, 
           rows: results.data.length,
-          headers: results.meta.fields || []
         } : null);
         onFileProcessed(results.data);
       },
@@ -89,15 +83,6 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
     multiple: false,
   });
 
-  const handleAbort = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      setIsUploading(false);
-      setUploadProgress(0);
-      setFileInfo(null);
-    }
-  };
-
   return (
     <div className="w-full space-y-6">
       <div
@@ -119,19 +104,12 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
         <ProgressBar 
           progress={uploadProgress}
           isUploading={isUploading}
-          onCancel={isUploading ? handleAbort : undefined}
         />
       )}
 
       {fileInfo && (
         <>
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-dark">
-                <FileText className="w-5 h-5" />
-                File Information
-              </CardTitle>
-            </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 text-text-dark/80">
@@ -158,7 +136,6 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
               </div>
             </CardContent>
           </Card>
-          <ColumnValidation headers={fileInfo.headers || []} />
         </>
       )}
     </div>

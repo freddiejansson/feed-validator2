@@ -4,7 +4,8 @@ import { FileUpload } from '@/components/upload/FileUpload';
 
 export default function Home() {
   const handleFileProcessed = (data: any[]) => {
-    console.log('Processed data:', data);
+    console.log('File processed. Number of rows:', data.length);
+    console.log('First row sample:', data[0]);
   };
 
   return (

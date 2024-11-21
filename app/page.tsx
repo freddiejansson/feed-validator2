@@ -4,8 +4,8 @@ import { FileUpload } from '@/components/upload/FileUpload';
 import { CogsDistributionCard } from '@/components/analytics/CogsDistributionCard';
 import { ShippingDistributionCard } from '@/components/analytics/ShippingDistributionCard';
 import Image from 'next/image'
-import Link from 'next/link';
 import { useState } from 'react';
+import { CsvRow } from '../types/csv';
 
 export default function Home() {
   const [processedData, setProcessedData] = useState<Array<{ 
@@ -13,12 +13,12 @@ export default function Home() {
     shippingCost: number;
   }>>([]);
 
-  const handleFileProcessed = (data: any[], columns: string[]) => {
+  const handleFileProcessed = (data: CsvRow[]) => {
     console.log('File processed. Number of rows:', data.length);
     
     const transformedData = data.map(row => ({
-      costPrice: parseFloat(row.costPrice || row.cogs || row.cost_price || 0),
-      shippingCost: parseFloat(row.shippingCost || row.shipping_cost || row.shipping || 0)
+      costPrice: parseFloat(String(row.costPrice || row.cogs || row.cost_price || '0')),
+      shippingCost: parseFloat(String(row.shippingCost || row.shipping_cost || row.shipping || '0'))
     }));
     
     console.log('Transformed data sample:', transformedData[0]);

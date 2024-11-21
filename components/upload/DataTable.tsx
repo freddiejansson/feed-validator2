@@ -1,7 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+// Define a type for CSV row values
+type CsvValue = string | number | boolean | null;
+
+// Define the data structure for a row
+interface CsvRow {
+  [column: string]: CsvValue;
+}
+
 interface DataTableProps {
-  data: Record<string, any>[];
+  data: CsvRow[];
   columns: string[];
 }
 

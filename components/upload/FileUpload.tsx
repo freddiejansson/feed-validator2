@@ -1,15 +1,16 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import Papa from 'papaparse';
+import Papa, { ParseResult } from 'papaparse';
 import { FileText, Upload, HardDrive, Database } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { DataTable } from '@/components/upload/DataTable';
 import { ColumnList } from '@/components/upload/ColumnList';
 import { FieldSpecifications } from './FieldSpecifications';
+import { CsvRow } from '@/types/csv';
 
 interface FileUploadProps {
-  onFileProcessed: (data: any[], columns: string[]) => void;
+  onFileProcessed: (data: CsvRow[], columns: string[]) => void;
 }
 
 export function FileUpload({ onFileProcessed }: FileUploadProps) {
@@ -21,7 +22,7 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
   } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
-  const [parsedData, setParsedData] = useState<Record<string, any>[]>([]);
+  const [parsedData, setParsedData] = useState<CsvRow[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
 
   const handleFile = useCallback(async (file: File) => {
@@ -53,20 +54,19 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: (results) => {
+      complete: (results: ParseResult<CsvRow>) => {
         console.log('Parse complete:', results);
         clearInterval(progressInterval);
         setUploadProgress(100);
         setIsUploading(false);
-        const typedData = results.data as Record<string, any>[];
-        const columns = Object.keys(typedData[0] || {});
-        setParsedData(typedData);
-        setColumns(columns);
+        
+        setParsedData(results.data);
+        setColumns(Object.keys(results.data[0] || {}));
         setFileInfo(prev => prev ? { 
           ...prev, 
           rows: results.data.length,
         } : null);
-        onFileProcessed(results.data, columns);
+        onFileProcessed(results.data, Object.keys(results.data[0] || {}));
       },
       error: (error) => {
         console.error('Error parsing CSV:', error);

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, AlertCircle, HelpCircle } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 interface ColumnDisplayProps {
   columns: string[];

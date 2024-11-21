@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { columnDefinitions, ColumnDefinition } from '@/config/columns';
+import { CsvRow } from '@/types/csv';
 
 interface FieldSpecificationsProps {
-  data: Record<string, any>[];
+  data: CsvRow[];
 }
 
-function calculateCorrectPercentage(data: Record<string, any>[], fieldName: string): number {
+function calculateCorrectPercentage(data: Record<string, unknown>[], fieldName: string): number {
   if (!data.length) return 0;
   const correctCount = data.filter(row => row[fieldName]).length;
   return Math.round((correctCount / data.length) * 100);

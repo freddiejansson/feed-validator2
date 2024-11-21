@@ -1,4 +1,5 @@
 import { ColumnDefinition, columnDefinitions } from '@/config/columns';
+import { CsvRow } from '@/types/csv';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -7,7 +8,7 @@ export interface ValidationResult {
   unmappedColumns: string[];
 }
 
-export function validateColumns(data: any[]): ValidationResult {
+export function validateColumns(data: CsvRow[]): ValidationResult {
   const totalRows = data.length;
   const missingRequired: string[] = [];
   const missingPreferred: string[] = [];

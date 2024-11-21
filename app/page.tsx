@@ -1,13 +1,28 @@
 'use client';
 
 import { FileUpload } from '@/components/upload/FileUpload';
+import { CogsDistributionCard } from '@/components/analytics/CogsDistributionCard';
+import { ShippingDistributionCard } from '@/components/analytics/ShippingDistributionCard';
 import Image from 'next/image'
+import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Home() {
+  const [processedData, setProcessedData] = useState<Array<{ 
+    costPrice: number;
+    shippingCost: number;
+  }>>([]);
+
   const handleFileProcessed = (data: any[], columns: string[]) => {
     console.log('File processed. Number of rows:', data.length);
-    console.log('Columns detected:', columns);
-    console.log('First row sample:', data[0]);
+    
+    const transformedData = data.map(row => ({
+      costPrice: parseFloat(row.costPrice || row.cogs || row.cost_price || 0),
+      shippingCost: parseFloat(row.shippingCost || row.shipping_cost || row.shipping || 0)
+    }));
+    
+    console.log('Transformed data sample:', transformedData[0]);
+    setProcessedData(transformedData);
   };
 
   return (
@@ -29,6 +44,14 @@ export default function Home() {
         </div>
 
         <FileUpload onFileProcessed={handleFileProcessed} />
+        
+        {processedData.length > 0 && (
+          <>
+            <CogsDistributionCard data={processedData} />
+            <ShippingDistributionCard data={processedData} />
+          </>
+        )}
+
       </div>
     </div>
   );

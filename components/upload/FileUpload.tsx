@@ -96,15 +96,14 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
     <div className="w-full space-y-6">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-xl bg-white p-12 text-center 
-          transition-colors cursor-pointer relative group
-          ${isDragActive ? 'border-purple bg-gray-light/50' : 'border-gray-medium hover:border-purple'}
-          ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
+        className={`file-upload-dropzone group ${
+          isDragActive ? 'active' : ''
+        } ${isUploading ? 'uploading' : ''}`}
       >
         <input {...getInputProps()} />
-        <div className="absolute inset-0 bg-gradient-to-r from-purple/5 via-coral/5 to-teal/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-        <Upload className="w-12 h-12 mx-auto mb-4 text-purple" />
-        <p className="text-text-dark/70">
+        <div className="file-upload-gradient" />
+        <Upload className="file-upload-icon" />
+        <p className="file-upload-text">
           {isDragActive ? "Drop the CSV file here..." : "Drag and drop a CSV file here, or click to select a file"}
         </p>
       </div>

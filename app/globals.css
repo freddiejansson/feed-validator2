@@ -28,3 +28,58 @@ body {
   background: var(--background);
   font-family: var(--font-geist-sans), Arial, sans-serif;
 }
+
+.file-upload-dropzone {
+  width: 100%;
+  border: 2px dashed var(--gray-medium);
+  border-radius: 0.75rem;
+  background-color: var(--white);
+  padding: 3rem;
+  text-align: center;
+  transition: border-color 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+
+.file-upload-dropzone:hover {
+  border-color: var(--primary-purple);
+}
+
+.file-upload-dropzone.active {
+  border-color: var(--primary-purple);
+  background-color: color-mix(in srgb, var(--gray-light) 50%, transparent);
+}
+
+.file-upload-dropzone.uploading {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.file-upload-gradient {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--primary-purple) 5%, transparent),
+    color-mix(in srgb, var(--secondary-coral) 5%, transparent),
+    color-mix(in srgb, var(--accent-teal) 5%, transparent)
+  );
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.group:hover .file-upload-gradient {
+  opacity: 0.5;
+}
+
+.file-upload-icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem auto;
+  color: var(--primary-purple);
+}
+
+.file-upload-text {
+  color: color-mix(in srgb, var(--text-dark) 70%, transparent);
+}

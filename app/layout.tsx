@@ -8,6 +8,19 @@ const geistSans = localFont({
   weight: "100 900",
 });
 
+declare global {
+  interface Number {
+    toLocaleString(): string;
+  }
+}
+
+// Configure number formatting globally
+Number.prototype.toLocaleString = function() {
+  return new Intl.NumberFormat('en-US', {
+    useGrouping: true,
+  }).format(Number(this)).replace(/,/g, ' ');
+};
+
 export const metadata: Metadata = {
   title: "Feed Validator | Kuvio",
   description: "Validate and analyze your product feed data",

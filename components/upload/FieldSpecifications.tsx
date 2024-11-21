@@ -6,10 +6,10 @@ interface FieldSpecificationsProps {
   data: Record<string, any>[];
 }
 
-function calculateMissingPercentage(data: Record<string, any>[], fieldName: string): number {
+function calculateCorrectPercentage(data: Record<string, any>[], fieldName: string): number {
   if (!data.length) return 0;
-  const missingCount = data.filter(row => !row[fieldName]).length;
-  return Math.round((missingCount / data.length) * 100);
+  const correctCount = data.filter(row => row[fieldName]).length;
+  return Math.round((correctCount / data.length) * 100);
 }
 
 function getNecessityColor(necessity: string): string {
@@ -25,6 +25,28 @@ function getNecessityColor(necessity: string): string {
 
 function formatNecessity(necessity: string): string {
   return necessity.charAt(0).toUpperCase() + necessity.slice(1);
+}
+
+function sortColumnDefinitions(columns: ColumnDefinition[]): ColumnDefinition[] {
+  const necessityOrder = {
+    required: 1,
+    preferred: 2,
+    optional: 3,
+  };
+
+  return [...columns].sort((a, b) => {
+    // Sort only by necessity, maintaining original order within each group
+    return necessityOrder[a.necessity as keyof typeof necessityOrder] - 
+           necessityOrder[b.necessity as keyof typeof necessityOrder];
+  });
+}
+
+function getCompletionColor(percentage: number): string {
+  if (percentage === 100) return 'text-emerald-500';
+  if (percentage >= 90) return 'text-emerald-400';
+  if (percentage >= 75) return 'text-yellow-500';
+  if (percentage >= 50) return 'text-orange-500';
+  return 'text-red-500';
 }
 
 export function FieldSpecifications({ data }: FieldSpecificationsProps) {
@@ -44,12 +66,12 @@ export function FieldSpecifications({ data }: FieldSpecificationsProps) {
                 <th className="p-2 text-left font-medium text-text-dark/70">Field Name</th>
                 <th className="p-2 text-left font-medium text-text-dark/70">Necessity</th>
                 <th className="p-2 text-left font-medium text-text-dark/70">Type</th>
-                <th className="p-2 text-left font-medium text-text-dark/70">Missing Values</th>
+                <th className="p-2 text-left font-medium text-text-dark/70">Correct Values</th>
               </tr>
             </thead>
             <tbody>
-              {columnDefinitions.map((field) => {
-                const missingPercentage = calculateMissingPercentage(data, field.name);
+              {sortColumnDefinitions(columnDefinitions).map((field) => {
+                const correctPercentage = calculateCorrectPercentage(data, field.name);
                 return (
                   <tr key={field.name} className="border-b border-purple/5 hover:bg-purple/5">
                     <td className="p-2 font-mono">{field.name}</td>
@@ -57,8 +79,8 @@ export function FieldSpecifications({ data }: FieldSpecificationsProps) {
                       {formatNecessity(field.necessity)}
                     </td>
                     <td className="p-2 text-text-dark/70">{field.type}</td>
-                    <td className={`p-2 ${missingPercentage > 0 ? 'text-orange-500' : 'text-teal'}`}>
-                      {missingPercentage}%
+                    <td className={`p-2 ${getCompletionColor(correctPercentage)}`}>
+                      {correctPercentage}%
                     </td>
                   </tr>
                 );

@@ -3,7 +3,7 @@ export type CsvValue = string | number | boolean | null;
 
 // CSV Row Structure
 export interface CsvRow {
-  [column: string]: CsvValue;
+  [key: string]: CsvValue;
 }
 
 // File Processing Types

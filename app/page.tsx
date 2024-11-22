@@ -3,31 +3,32 @@
 import { FileUpload } from '@/components/upload/FileUpload';
 import { CogsDistributionCard } from '@/components/analytics/CogsDistributionCard';
 import { ShippingDistributionCard } from '@/components/analytics/ShippingDistributionCard';
+import { MarginDistributionCard } from '@/components/analytics/MarginDistributionCard';
 import Image from 'next/image'
 import { useState } from 'react';
-import { CsvRow } from '../types/csv';
 
 export default function Home() {
   const [processedData, setProcessedData] = useState<Array<{ 
     costPrice: number;
     shippingCost: number;
+    salesPrice: number;
   }>>([]);
 
-  const handleFileProcessed = (data: CsvRow[]) => {
+  const handleFileProcessed = (data: Record<string, unknown>[]) => {
     console.log('File processed. Number of rows:', data.length);
     
     const transformedData = data.map(row => ({
       costPrice: parseFloat(String(row.costPrice || row.cogs || row.cost_price || '0')),
-      shippingCost: parseFloat(String(row.shippingCost || row.shipping_cost || row.shipping || '0'))
+      shippingCost: parseFloat(String(row.shippingCost || row.shipping_cost || row.shipping || '0')),
+      salesPrice: parseFloat(String(row.salesPrice || row.sales_price || row.price || '0'))
     }));
     
-    console.log('Transformed data sample:', transformedData[0]);
     setProcessedData(transformedData);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-light p-8">
-      <div className="max-w-3xl mx-auto space-y-8">
+      <div className="max-w-5xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <Image
             src="/kuvio-logos/kuvio-logo-colors.svg"
@@ -49,6 +50,13 @@ export default function Home() {
           <>
             <CogsDistributionCard data={processedData} />
             <ShippingDistributionCard data={processedData} />
+            <MarginDistributionCard 
+              data={processedData.map(item => ({
+                salesPrice: item.salesPrice,
+                costPrice: item.costPrice,
+                shippingCosts: item.shippingCost
+              }))} 
+            />
           </>
         )}
 

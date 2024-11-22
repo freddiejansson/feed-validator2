@@ -1,16 +1,16 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import Papa, { ParseResult } from 'papaparse';
+import Papa from 'papaparse';
 import { FileText, Upload, HardDrive, Database } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { DataTable } from '@/components/upload/DataTable';
 import { ColumnList } from '@/components/upload/ColumnList';
 import { FieldSpecifications } from './FieldSpecifications';
-import { CsvRow } from '@/types/csv';
+import { CsvRow, CsvValue } from '@/types/csv';
 
 interface FileUploadProps {
-  onFileProcessed: (data: CsvRow[], columns: string[]) => void;
+  onFileProcessed: (data: Record<string, unknown>[], columns: string[]) => void;
 }
 
 export function FileUpload({ onFileProcessed }: FileUploadProps) {
@@ -54,19 +54,27 @@ export function FileUpload({ onFileProcessed }: FileUploadProps) {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: (results: ParseResult<CsvRow>) => {
+      complete: (results) => {
         console.log('Parse complete:', results);
         clearInterval(progressInterval);
         setUploadProgress(100);
         setIsUploading(false);
-        
-        setParsedData(results.data);
-        setColumns(Object.keys(results.data[0] || {}));
+        const typedData = results.data as Record<string, string | number | boolean | null>[];
+        const csvData: CsvRow[] = typedData.map(row => {
+          const typedRow: Record<string, CsvValue> = {};
+          Object.entries(row).forEach(([key, value]) => {
+            typedRow[key] = value as CsvValue;
+          });
+          return typedRow;
+        });
+        setParsedData(csvData);
+        const columns = Object.keys(typedData[0] || {});
+        setColumns(columns);
         setFileInfo(prev => prev ? { 
           ...prev, 
           rows: results.data.length,
         } : null);
-        onFileProcessed(results.data, Object.keys(results.data[0] || {}));
+        onFileProcessed(csvData, columns);
       },
       error: (error) => {
         console.error('Error parsing CSV:', error);

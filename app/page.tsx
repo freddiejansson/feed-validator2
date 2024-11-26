@@ -4,7 +4,7 @@ import { FileUpload } from '@/components/upload/FileUpload';
 import { CogsDistributionCard } from '@/components/analytics/CogsDistributionCard';
 import { ShippingDistributionCard } from '@/components/analytics/ShippingDistributionCard';
 import { MarginDistributionCard } from '@/components/analytics/MarginDistributionCard';
-import Image from 'next/image'
+import AnimatedFeedLogo from '@/components/ui/animated-feed-logo';
 import { useState } from 'react';
 
 export default function Home() {
@@ -27,17 +27,10 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-light p-8">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[var(--background-gray)] p-8">
       <div className="max-w-5xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <Image
-            src="/kuvio-logos/kuvio-logo-colors.svg"
-            alt="Kuvio Logo"
-            width={200}
-            height={36}
-            className="mx-auto"
-            priority
-          />
+          <AnimatedFeedLogo />
           <h1 className="text-4xl font-bold text-purple-dark">Kuvio Feed Validator</h1>
           <p className="text-xl text-text-dark/70">
             Upload your CSV feed for validation and analytics

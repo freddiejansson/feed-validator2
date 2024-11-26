@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import Image from "next/image";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,10 +34,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} bg-white text-text-dark antialiased`}
-      >
-        {children}
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </head>
+      <body className={`${geistSans.variable} text-text-dark antialiased`}>
+        <header className="sticky top-0 z-50 bg-[var(--primary-purple-light)] h-14 flex items-center px-6">
+          <div className="flex items-center gap-2">
+            <Image 
+              src="/kuvio-logos/logo-light.svg" 
+              alt="Kuvio" 
+              width={104} 
+              height={15} 
+            />
+            <span className="text-white/60 text-sm ml-2 border-l border-white/20 pl-2">
+              Feed Validator
+            </span>
+          </div>
+        </header>
+        <main>
+          {children}
+        </main>
       </body>
     </html>
   );

@@ -5,14 +5,16 @@
 :root {
   --primary-purple: #6B66A8;
   --primary-purple-dark: #5A5691;
+  --primary-purple-light: #847dad;
   --secondary-coral: #FF9E8C;
   --accent-teal: #4B9B9B;
   --text-dark: #333333;
   --gray-light: #F5F5F7;
   --gray-medium: #E5E5EA;
   --white: #FFFFFF;
+  --background-gray: #f0f2f6;
   
-  --background: var(--white);
+  --background: var(--background-gray);
   --foreground: var(--text-dark);
 }
 

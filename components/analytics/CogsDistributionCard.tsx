@@ -29,7 +29,7 @@ export function CogsDistributionCard({ data }: CogsDistributionProps) {
     let max = -Infinity;
     let min = Infinity;
     let sum = 0;
-    let validCosts: number[] = [];
+    const validCosts = data.filter(product => product.costPrice > 0).map(product => product.costPrice);
 
     for (let i = 0; i < data.length; i++) {
       const cost = Number(data[i]?.costPrice);
@@ -38,7 +38,6 @@ export function CogsDistributionCard({ data }: CogsDistributionProps) {
       if (cost > max) max = cost;
       if (cost < min) min = cost;
       sum += cost;
-      validCosts.push(cost);
     }
 
     if (validCosts.length === 0) return defaultReturn;
